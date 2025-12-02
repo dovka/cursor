@@ -10,6 +10,7 @@
 -- DROP VIEW public.v_nimbus_runs_dp_km;
 
 CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km
+WITH NO SCHEMA BINDING
 AS
 WITH nr AS (
     SELECT

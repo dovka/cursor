@@ -153,7 +153,38 @@ AS "user"
 
 ---
 
-## 8. Data Type Casting
+## 8. Late Binding Views (Critical for External Tables)
+
+### Postgres
+```sql
+CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km
+AS
+SELECT ...
+```
+
+### Redshift (with Glue Catalog External Tables)
+```sql
+CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km
+WITH NO SCHEMA BINDING
+AS
+SELECT ...
+```
+
+**Why**: Redshift requires `WITH NO SCHEMA BINDING` (late binding) for views that reference external tables in Glue catalog. Without this, you'll get:
+```
+ERROR: External tables are not supported in views
+Hint: Please use late binding view and add 'with no schema binding' at the query end.
+```
+
+**Important**: Late binding views:
+- Don't validate column names/types at creation time
+- Validate at query execution time
+- Required for external tables
+- Allow schema changes in source tables without recreating view
+
+---
+
+## 9. Data Type Casting
 
 ### Postgres
 ```sql
@@ -228,6 +259,7 @@ ns AS (
 
 | Feature | Postgres | Redshift | Breaking? |
 |---------|----------|----------|-----------|
+| View binding | Default | `WITH NO SCHEMA BINDING` (required) | ✅ Yes |
 | JSON extraction | `->` and `->>` | `JSON_EXTRACT_PATH_TEXT()` | ✅ Yes |
 | Date arithmetic | `interval` | `DATEADD()` | ✅ Yes |
 | Window frames | `RANGE` | `ROWS` | ✅ Yes |

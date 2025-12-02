@@ -56,23 +56,32 @@ WHICH SQL FILE TO USE?
 KEY CHANGES MADE (Required for Redshift Compatibility)
 ================================================================================
 
-1. JSON Extraction Syntax:
+1. Late Binding View (CRITICAL):
+   FROM: CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km AS
+   TO:   CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km
+         WITH NO SCHEMA BINDING
+         AS
+   
+   WHY:  Required for views that reference external Glue catalog tables.
+         Without this, you get: "ERROR: External tables are not supported in views"
+
+2. JSON Extraction Syntax:
    FROM: (metadata_json -> 'key') ->> 'subkey'
    TO:   JSON_EXTRACT_PATH_TEXT(metadata_json, 'key', 'subkey', true)
 
-2. Window Function Frame:
+3. Window Function Frame:
    FROM: RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
    TO:   ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
    
-3. Date Arithmetic:
+4. Date Arithmetic:
    FROM: WHERE time_created >= (now() - '70 days'::interval)
    TO:   WHERE time_created >= DATEADD(day, -70, GETDATE())
 
-4. Table Names:
+5. Table Names:
    FROM: nimbus_runs
    TO:   datalake_glue_catalog.db1_shared_dev_a_nimbus__nimbusdb__public_nimbus_runs
 
-5. JSON Validation (Added):
+6. JSON Validation (Added):
    WHERE metadata_json IS NOT NULL AND IS_VALID_JSON(metadata_json)
 
 ================================================================================

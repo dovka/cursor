@@ -83,6 +83,32 @@ Before creating the view, test the SELECT statement:
 - [ ] Returns expected number of rows
 - [ ] All columns are present
 
+### 4b. Create the View and Test IMMEDIATELY
+**IMPORTANT**: Because this is a late binding view (`WITH NO SCHEMA BINDING`), it won't validate column names at creation time. You MUST test immediately:
+
+```sql
+-- Create the view (run the full SQL file)
+-- Then IMMEDIATELY test:
+
+-- Test 1: Does it return any data?
+SELECT COUNT(*) FROM public.v_nimbus_runs_dp_km;
+
+-- Test 2: Can we select all columns?
+SELECT * FROM public.v_nimbus_runs_dp_km LIMIT 1;
+
+-- Test 3: Spot check specific columns
+SELECT run_uuid, step_name, remcmcellid, exec_cpu_hours 
+FROM public.v_nimbus_runs_dp_km 
+LIMIT 5;
+```
+
+**Expected Results**:
+- [ ] All queries execute without column errors
+- [ ] No "column does not exist" errors
+- [ ] Data is returned as expected
+
+**If you get column errors**: There's a typo in the SQL. Review the error and fix the column name.
+
 ### 5. Row Count Comparison (After Deployment)
 After creating the view, compare row counts:
 

@@ -40,6 +40,7 @@ The Aurora Postgres view `v_nimbus_runs_dp_km` can be converted to Redshift with
 
 | Change | Why |
 |--------|-----|
+| Added `WITH NO SCHEMA BINDING` | **CRITICAL** - Required for external Glue tables |
 | `->` / `->>` → `JSON_EXTRACT_PATH_TEXT()` | Redshift JSON syntax |
 | `RANGE` → `ROWS` in window function | Redshift limitation |
 | `now() - '70 days'::interval` → `DATEADD(day, -70, GETDATE())` | Redshift date syntax |
@@ -98,6 +99,17 @@ The Aurora Postgres view `v_nimbus_runs_dp_km` can be converted to Redshift with
 ---
 
 ## 🔍 Quick Syntax Reference
+
+### Late Binding View (CRITICAL)
+```sql
+-- Postgres
+CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km AS SELECT ...
+
+-- Redshift (REQUIRED for external tables)
+CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km
+WITH NO SCHEMA BINDING
+AS SELECT ...
+```
 
 ### JSON Extraction
 ```sql

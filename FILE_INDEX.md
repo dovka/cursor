@@ -11,6 +11,7 @@ All files for the Aurora Postgres to Redshift view conversion of `v_nimbus_runs_
 | **README.md** | Project overview and navigation | ✅ Yes |
 | **QUICK_REFERENCE.md** | 1-page quick start guide | ✅ Yes |
 | **SUMMARY.txt** | Executive summary (printable) | ✅ Yes |
+| **ERROR_FIXED.md** | Fix for external tables error | ✅ **READ THIS** if you got an error |
 
 ---
 
@@ -23,7 +24,8 @@ All files for the Aurora Postgres to Redshift view conversion of `v_nimbus_runs_
 | **CONVERSION_SUMMARY.md** | Detailed analysis, assumptions, and decision matrix | ~3 pages |
 | **COMPLETE_FIELD_LIST.md** | All 53 fields with descriptions and categories | ~4 pages |
 | **FIELD_COMPARISON.md** | Field-by-field type comparison table | ~2 pages |
-| **SYNTAX_DIFFERENCES.md** | SQL syntax changes explained with examples | ~4 pages |
+| **SYNTAX_DIFFERENCES.md** | SQL syntax changes explained with examples | ~5 pages |
+| **LATE_BINDING_EXPLAINED.md** | Late binding views detailed explanation | ~3 pages |
 
 ### Operational Files
 
@@ -54,6 +56,7 @@ All files for the Aurora Postgres to Redshift view conversion of `v_nimbus_runs_
 ### Quick Start Package (Read These First)
 ```
 README.md                    - Start here
+ERROR_FIXED.md              - If you got the external tables error
 QUICK_REFERENCE.md          - 1-page overview
 SUMMARY.txt                 - Executive summary
 ```
@@ -69,6 +72,7 @@ FIELD_COMPARISON.md         - Data type comparison
 ```
 COMPLETE_FIELD_LIST.md      - All field details
 SYNTAX_DIFFERENCES.md       - SQL conversion details
+LATE_BINDING_EXPLAINED.md   - Late binding views explained
 ```
 
 ### Deployment Package (For Execution)
@@ -84,9 +88,9 @@ VALIDATION_CHECKLIST.md     - Validation steps
 
 ## 📊 File Statistics
 
-- **Total Files**: 11 (10 documentation + 2 SQL)
-- **Total Pages**: ~30 pages of documentation
-- **SQL Files**: 2 versions provided
+- **Total Files**: 13 (11 documentation + 2 SQL)
+- **Total Pages**: ~35 pages of documentation
+- **SQL Files**: 2 versions provided (both updated for late binding)
 - **Documentation Languages**: Markdown (.md) and Plain Text (.txt)
 
 ---
@@ -121,6 +125,12 @@ VALIDATION_CHECKLIST.md     - Validation steps
 ---
 
 ## 🔍 Finding Specific Information
+
+### "I got an error about external tables"
+→ **ERROR_FIXED.md**
+
+### "What is WITH NO SCHEMA BINDING?"
+→ **LATE_BINDING_EXPLAINED.md**
 
 ### "What changed in the SQL?"
 → **SYNTAX_DIFFERENCES.md**
@@ -195,19 +205,21 @@ To share with others:
 All files have been generated and verified:
 
 - [x] README.md
+- [x] ERROR_FIXED.md ⭐ NEW
 - [x] QUICK_REFERENCE.md
 - [x] SUMMARY.txt
 - [x] CONVERSION_SUMMARY.md
 - [x] COMPLETE_FIELD_LIST.md
 - [x] FIELD_COMPARISON.md
 - [x] SYNTAX_DIFFERENCES.md
+- [x] LATE_BINDING_EXPLAINED.md ⭐ NEW
 - [x] VALIDATION_CHECKLIST.md
 - [x] ASSUMPTIONS_CHECKLIST.txt
 - [x] FILE_INDEX.md
-- [x] v_nimbus_runs_dp_km_redshift.sql
-- [x] v_nimbus_runs_dp_km_redshift_with_numeric_casting.sql
+- [x] v_nimbus_runs_dp_km_redshift.sql ✅ UPDATED
+- [x] v_nimbus_runs_dp_km_redshift_with_numeric_casting.sql ✅ UPDATED
 
-**Status**: ✅ Complete - All files generated successfully
+**Status**: ✅ Complete - All files updated with late binding fix
 
 ---
 

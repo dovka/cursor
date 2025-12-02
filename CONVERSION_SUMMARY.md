@@ -53,21 +53,34 @@ The original view extracts these statistics fields as TEXT (VARCHAR):
 
 ## KEY TECHNICAL CHANGES (Required for Redshift)
 
-### 1. **JSON Extraction Syntax**
+### 1. **Late Binding View** (CRITICAL)
+Added `WITH NO SCHEMA BINDING` to CREATE VIEW statement.
+
+**Required because**: Redshift doesn't allow views to reference external Glue catalog tables without late binding.
+
+**Error without it**:
+```
+ERROR: External tables are not supported in views
+Hint: Please use late binding view and add 'with no schema binding' at the query end.
+```
+
+**Impact**: The view becomes a "late binding view" which validates schema at query time, not creation time.
+
+### 2. **JSON Extraction Syntax**
 | Postgres | Redshift |
 |----------|----------|
 | `metadata_json -> 'key'` | `JSON_EXTRACT_PATH_TEXT(metadata_json, 'key', true)` |
 | `metadata_json ->> 'key'` | `JSON_EXTRACT_PATH_TEXT(metadata_json, 'key', true)` |
 | `metadata_json -> 'key1' ->> 'key2'` | `JSON_EXTRACT_PATH_TEXT(metadata_json, 'key1', 'key2', true)` |
 
-### 2. **Window Function Frame**
+### 3. **Window Function Frame**
 | Postgres | Redshift |
 |----------|----------|
 | `RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING` | `ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING` |
 
 **Reason**: Redshift doesn't support RANGE in window functions
 
-### 3. **Added JSON Validation**
+### 4. **Added JSON Validation**
 Added to nimbus_steps CTE WHERE clause:
 ```sql
 AND nimbus_steps.metadata_json IS NOT NULL 

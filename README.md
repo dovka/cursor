@@ -28,6 +28,7 @@ The `v_nimbus_runs_dp_km` view has been successfully converted from Aurora Postg
 | **COMPLETE_FIELD_LIST.md** | All 53 fields with descriptions | Field verification |
 | **FIELD_COMPARISON.md** | Field-by-field comparison | Verify data type compatibility |
 | **SYNTAX_DIFFERENCES.md** | SQL syntax changes explained | Understanding the conversion |
+| **LATE_BINDING_EXPLAINED.md** | Late binding views explanation | Understanding `WITH NO SCHEMA BINDING` |
 | **VALIDATION_CHECKLIST.md** | Deployment validation steps | During deployment |
 | **ASSUMPTIONS_CHECKLIST.txt** | Printable confirmation form | Formal approvals |
 
@@ -64,11 +65,12 @@ The `v_nimbus_runs_dp_km` view has been successfully converted from Aurora Postg
 
 ## 🔑 Main Changes
 
-1. JSON extraction: `->` / `->>` → `JSON_EXTRACT_PATH_TEXT()`
-2. Window function: `RANGE` → `ROWS` 
-3. Date arithmetic: `interval` → `DATEADD()`
-4. Table names: Simple → Full Glue catalog paths
-5. JSON validation: Added `IS_VALID_JSON()` checks
+1. **Late binding**: Added `WITH NO SCHEMA BINDING` (required for external tables)
+2. JSON extraction: `->` / `->>` → `JSON_EXTRACT_PATH_TEXT()`
+3. Window function: `RANGE` → `ROWS` 
+4. Date arithmetic: `interval` → `DATEADD()`
+5. Table names: Simple → Full Glue catalog paths
+6. JSON validation: Added `IS_VALID_JSON()` checks
 
 ---
 
