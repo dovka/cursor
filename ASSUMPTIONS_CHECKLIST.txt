@@ -1,0 +1,164 @@
+================================================================================
+AURORA POSTGRES TO REDSHIFT VIEW CONVERSION
+ASSUMPTIONS CONFIRMATION CHECKLIST
+================================================================================
+
+Project: v_nimbus_runs_dp_km view conversion
+Date: _______________
+Reviewer: _______________
+
+================================================================================
+SECTION 1: TABLE NAMING
+================================================================================
+
+Assumption: Tables are in Glue catalog with pattern:
+  datalake_glue_catalog.db1_shared_dev_a_nimbus__nimbusdb__public_<table_name>
+
+Tables used:
+  - nimbus_runs
+  - nimbus_steps  
+  - failure_reasons
+  - run_to_step_association
+
+[ ] CONFIRMED - Pattern is correct
+[ ] NEEDS CHANGE - Correct pattern is: _________________________________
+
+================================================================================
+SECTION 2: TIME FILTER
+================================================================================
+
+Assumption: Keep 70-day historical data filter
+
+Original: WHERE time_created >= (now() - '70 days'::interval)
+Converted: WHERE time_created >= DATEADD(day, -70, GETDATE())
+
+[ ] CONFIRMED - Keep 70 days
+[ ] NEEDS CHANGE - Use _______ days/months instead
+
+================================================================================
+SECTION 3: STATISTICS FIELDS DATA TYPES
+================================================================================
+
+Affected fields:
+  - fractional_factor
+  - exec_cpu_hours
+  - executor_cores
+  - driver_cpu_hours
+  - app_required_cores
+  - step_app_duration_in_minutes
+
+Choose one:
+
+[ ] OPTION 1 - Keep as VARCHAR (exact match to Postgres view)
+    File to use: v_nimbus_runs_dp_km_redshift.sql
+
+[ ] OPTION 2 - Cast to FLOAT/INT (better performance, matches MV_RUNS_DP_KM)
+    File to use: v_nimbus_runs_dp_km_redshift_with_numeric_casting.sql
+
+================================================================================
+SECTION 4: TIMESTAMP FIELDS
+================================================================================
+
+Assumption: Keep timestamp fields with full date+time (not just date)
+
+Fields affected:
+  - run_time_created
+  - run_end_time
+  - step_time_created
+  - step_start_time
+  - step_end_time
+
+[ ] CONFIRMED - Keep as TIMESTAMP
+[ ] NEEDS CHANGE - Cast to DATE (will lose time component)
+
+================================================================================
+SECTION 5: GRANTS AND PERMISSIONS
+================================================================================
+
+Assumption: Grant SELECT to these roles:
+  - "IAMR:cu-rem-pm-users"
+  - quicksight_user
+
+[ ] CONFIRMED - Roles are correct
+[ ] NEEDS CHANGE - Correct roles are:
+    - _________________________________
+    - _________________________________
+
+================================================================================
+SECTION 6: SCHEMA
+================================================================================
+
+Assumption: Create view in 'public' schema
+
+[ ] CONFIRMED - Use public schema
+[ ] NEEDS CHANGE - Use schema: _________________________________
+
+================================================================================
+SECTION 7: VIEW OWNER (Optional)
+================================================================================
+
+Note: Original Postgres view had owner 'nimbusadmin'
+Redshift views don't use ALTER TABLE...OWNER syntax
+
+Ownership will be: Current user running the CREATE VIEW statement
+
+[ ] ACKNOWLEDGED
+[ ] NEEDS SPECIFIC USER - Create view as user: _________________________________
+
+================================================================================
+DECISION SUMMARY
+================================================================================
+
+Based on answers above:
+
+SQL File to Deploy:
+[ ] v_nimbus_runs_dp_km_redshift.sql (Version 1 - VARCHAR)
+[ ] v_nimbus_runs_dp_km_redshift_with_numeric_casting.sql (Version 2 - Numeric)
+
+Modifications Required:
+[ ] None - Deploy as-is
+[ ] Yes - See notes below
+
+Modification Notes:
+___________________________________________________________________________
+___________________________________________________________________________
+___________________________________________________________________________
+___________________________________________________________________________
+
+================================================================================
+APPROVAL
+================================================================================
+
+Technical Reviewer: _______________  Date: _______________  Sign: __________
+
+Business Reviewer: _______________   Date: _______________  Sign: __________
+
+DBA/Deployment:    _______________   Date: _______________  Sign: __________
+
+================================================================================
+DEPLOYMENT TRACKING
+================================================================================
+
+Deployment Date: _______________
+Deployment Time: _______________
+Deployed By: _______________
+Environment: [ ] DEV [ ] TEST [ ] STAGING [ ] PROD
+
+Post-Deployment Validation:
+[ ] Row count verified
+[ ] Sample data spot-checked
+[ ] Grants verified
+[ ] QuickSight dashboards tested
+[ ] No errors in Redshift logs
+
+Issues Found:
+[ ] None
+[ ] Yes - See notes: _______________________________________________________
+___________________________________________________________________________
+___________________________________________________________________________
+
+Rollback Required:
+[ ] No - Deployment successful
+[ ] Yes - Date/Time: _______________  Reason: ____________________________
+
+================================================================================
