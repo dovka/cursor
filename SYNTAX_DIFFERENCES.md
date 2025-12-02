@@ -164,11 +164,12 @@ SELECT ...
 
 ### Redshift (with Glue Catalog External Tables)
 ```sql
-CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km
-WITH NO SCHEMA BINDING
-AS
+CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km AS
 SELECT ...
+WITH NO SCHEMA BINDING;
 ```
+
+**Note**: `WITH NO SCHEMA BINDING` goes at the **end** of the CREATE VIEW statement, not after the view name.
 
 **Why**: Redshift requires `WITH NO SCHEMA BINDING` (late binding) for views that reference external tables in Glue catalog. Without this, you'll get:
 ```

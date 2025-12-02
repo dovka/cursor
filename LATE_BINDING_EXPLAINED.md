@@ -51,7 +51,8 @@ SELECT ...
 ### Regular View (Early Binding)
 ```sql
 -- Creation time
-CREATE VIEW my_view AS SELECT col1, col2 FROM my_table;
+CREATE VIEW my_view AS 
+SELECT col1, col2 FROM my_table;
 -- ✅ Checks: Does my_table exist? Does it have col1, col2?
 -- ❌ Fails if table doesn't exist or columns are missing
 
@@ -63,7 +64,9 @@ SELECT * FROM my_view;
 ### Late Binding View
 ```sql
 -- Creation time
-CREATE VIEW my_view WITH NO SCHEMA BINDING AS SELECT col1, col2 FROM my_table;
+CREATE VIEW my_view AS 
+SELECT col1, col2 FROM my_table
+WITH NO SCHEMA BINDING;
 -- ✅ Creates view without checking if table/columns exist
 -- ⚠️  Just stores the SQL text
 
@@ -72,6 +75,8 @@ SELECT * FROM my_view;
 -- ✅ NOW checks: Does my_table exist? Does it have col1, col2?
 -- ❌ Fails at this point if table/columns don't exist
 ```
+
+**Syntax Note**: `WITH NO SCHEMA BINDING` goes at the **end** of the CREATE VIEW statement.
 
 ---
 
@@ -114,32 +119,32 @@ If source tables in Glue catalog change schema (columns added/removed/renamed), 
 
 ### Before (Causes Error)
 ```sql
-CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km
-AS
+CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km AS
 WITH nr AS (
     SELECT ...
     FROM datalake_glue_catalog.db1_shared_dev_a_nimbus__nimbusdb__public_nimbus_runs
     ...
 )
-...
+SELECT ... FROM ... JOIN nr ...;
 ```
 
 ❌ **ERROR**: External tables are not supported in views
 
 ### After (Works Correctly)
 ```sql
-CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km
-WITH NO SCHEMA BINDING
-AS
+CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km AS
 WITH nr AS (
     SELECT ...
     FROM datalake_glue_catalog.db1_shared_dev_a_nimbus__nimbusdb__public_nimbus_runs
     ...
 )
-...
+SELECT ... FROM ... JOIN nr ...
+WITH NO SCHEMA BINDING;
 ```
 
 ✅ **SUCCESS**: View created successfully
+
+**Important**: `WITH NO SCHEMA BINDING` must be at the **end**, right before the final semicolon.
 
 ---
 
@@ -175,8 +180,9 @@ ERROR: column "wrong_column_name" does not exist
 
 ### Pitfall 1: Typo in Column Name
 ```sql
-CREATE VIEW my_view WITH NO SCHEMA BINDING AS
-SELECT wrong_colum_name FROM external_table;
+CREATE VIEW my_view AS
+SELECT wrong_colum_name FROM external_table
+WITH NO SCHEMA BINDING;
 -- ✅ Creates successfully (late binding doesn't validate)
 
 SELECT * FROM my_view;
@@ -188,8 +194,9 @@ SELECT * FROM my_view;
 ### Pitfall 2: External Table Schema Changed
 ```sql
 -- View expects columns: id, name, email
-CREATE VIEW my_view WITH NO SCHEMA BINDING AS
-SELECT id, name, email FROM external_table;
+CREATE VIEW my_view AS
+SELECT id, name, email FROM external_table
+WITH NO SCHEMA BINDING;
 
 -- Later, external table schema changes (email column removed)
 -- View creation was long ago, still exists

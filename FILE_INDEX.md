@@ -11,7 +11,8 @@ All files for the Aurora Postgres to Redshift view conversion of `v_nimbus_runs_
 | **README.md** | Project overview and navigation | ✅ Yes |
 | **QUICK_REFERENCE.md** | 1-page quick start guide | ✅ Yes |
 | **SUMMARY.txt** | Executive summary (printable) | ✅ Yes |
-| **ERROR_FIXED.md** | Fix for external tables error | ✅ **READ THIS** if you got an error |
+| **ERROR_FIXED.md** | Fix for external tables error | ⚠️ If you got external tables error |
+| **SYNTAX_ERROR_FIXED.md** | Fix for WITH syntax error | ⚠️ If you got syntax error |
 
 ---
 
@@ -56,7 +57,8 @@ All files for the Aurora Postgres to Redshift view conversion of `v_nimbus_runs_
 ### Quick Start Package (Read These First)
 ```
 README.md                    - Start here
-ERROR_FIXED.md              - If you got the external tables error
+SYNTAX_ERROR_FIXED.md       - If you got "syntax error at or near WITH"
+ERROR_FIXED.md              - If you got "external tables not supported"
 QUICK_REFERENCE.md          - 1-page overview
 SUMMARY.txt                 - Executive summary
 ```
@@ -88,9 +90,9 @@ VALIDATION_CHECKLIST.md     - Validation steps
 
 ## 📊 File Statistics
 
-- **Total Files**: 13 (11 documentation + 2 SQL)
-- **Total Pages**: ~35 pages of documentation
-- **SQL Files**: 2 versions provided (both updated for late binding)
+- **Total Files**: 14 (12 documentation + 2 SQL)
+- **Total Pages**: ~38 pages of documentation
+- **SQL Files**: 2 versions provided (both updated with correct late binding syntax)
 - **Documentation Languages**: Markdown (.md) and Plain Text (.txt)
 
 ---
@@ -125,6 +127,9 @@ VALIDATION_CHECKLIST.md     - Validation steps
 ---
 
 ## 🔍 Finding Specific Information
+
+### "I got syntax error at or near WITH"
+→ **SYNTAX_ERROR_FIXED.md**
 
 ### "I got an error about external tables"
 → **ERROR_FIXED.md**
@@ -205,21 +210,22 @@ To share with others:
 All files have been generated and verified:
 
 - [x] README.md
-- [x] ERROR_FIXED.md ⭐ NEW
+- [x] SYNTAX_ERROR_FIXED.md ⭐ NEW - Syntax fix
+- [x] ERROR_FIXED.md
 - [x] QUICK_REFERENCE.md
 - [x] SUMMARY.txt
 - [x] CONVERSION_SUMMARY.md
 - [x] COMPLETE_FIELD_LIST.md
 - [x] FIELD_COMPARISON.md
 - [x] SYNTAX_DIFFERENCES.md
-- [x] LATE_BINDING_EXPLAINED.md ⭐ NEW
+- [x] LATE_BINDING_EXPLAINED.md
 - [x] VALIDATION_CHECKLIST.md
 - [x] ASSUMPTIONS_CHECKLIST.txt
 - [x] FILE_INDEX.md
-- [x] v_nimbus_runs_dp_km_redshift.sql ✅ UPDATED
-- [x] v_nimbus_runs_dp_km_redshift_with_numeric_casting.sql ✅ UPDATED
+- [x] v_nimbus_runs_dp_km_redshift.sql ✅✅ UPDATED - Correct syntax
+- [x] v_nimbus_runs_dp_km_redshift_with_numeric_casting.sql ✅✅ UPDATED - Correct syntax
 
-**Status**: ✅ Complete - All files updated with late binding fix
+**Status**: ✅ Complete - Syntax error fixed, WITH NO SCHEMA BINDING now at END of statement
 
 ---
 

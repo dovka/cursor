@@ -54,7 +54,14 @@ The original view extracts these statistics fields as TEXT (VARCHAR):
 ## KEY TECHNICAL CHANGES (Required for Redshift)
 
 ### 1. **Late Binding View** (CRITICAL)
-Added `WITH NO SCHEMA BINDING` to CREATE VIEW statement.
+Added `WITH NO SCHEMA BINDING` at the end of CREATE VIEW statement.
+
+**Syntax**:
+```sql
+CREATE OR REPLACE VIEW view_name AS
+SELECT ...
+WITH NO SCHEMA BINDING;
+```
 
 **Required because**: Redshift doesn't allow views to reference external Glue catalog tables without late binding.
 
@@ -65,6 +72,8 @@ Hint: Please use late binding view and add 'with no schema binding' at the query
 ```
 
 **Impact**: The view becomes a "late binding view" which validates schema at query time, not creation time.
+
+**Note**: The `WITH NO SCHEMA BINDING` clause must be at the **end** of the CREATE VIEW statement, not after the view name.
 
 ### 2. **JSON Extraction Syntax**
 | Postgres | Redshift |

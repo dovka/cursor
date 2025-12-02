@@ -103,13 +103,16 @@ The Aurora Postgres view `v_nimbus_runs_dp_km` can be converted to Redshift with
 ### Late Binding View (CRITICAL)
 ```sql
 -- Postgres
-CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km AS SELECT ...
+CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km AS
+SELECT ...;
 
 -- Redshift (REQUIRED for external tables)
-CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km
-WITH NO SCHEMA BINDING
-AS SELECT ...
+CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km AS
+SELECT ...
+WITH NO SCHEMA BINDING;
 ```
+
+**Note**: `WITH NO SCHEMA BINDING` goes at the END
 
 ### JSON Extraction
 ```sql

@@ -58,12 +58,15 @@ KEY CHANGES MADE (Required for Redshift Compatibility)
 
 1. Late Binding View (CRITICAL):
    FROM: CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km AS
-   TO:   CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km
-         WITH NO SCHEMA BINDING
-         AS
+         SELECT ... FROM ...;
+   
+   TO:   CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km AS
+         SELECT ... FROM ...
+         WITH NO SCHEMA BINDING;
    
    WHY:  Required for views that reference external Glue catalog tables.
-         Without this, you get: "ERROR: External tables are not supported in views"
+         WITHOUT THIS: "ERROR: External tables are not supported in views"
+         NOTE: Goes at the END of the statement, not after view name
 
 2. JSON Extraction Syntax:
    FROM: (metadata_json -> 'key') ->> 'subkey'

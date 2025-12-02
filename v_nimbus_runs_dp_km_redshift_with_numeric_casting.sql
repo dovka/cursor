@@ -9,9 +9,7 @@
 
 -- DROP VIEW public.v_nimbus_runs_dp_km;
 
-CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km
-WITH NO SCHEMA BINDING
-AS
+CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km AS
 WITH nr AS (
     SELECT
         nimbus_runs.id,
@@ -142,7 +140,8 @@ SELECT
 FROM datalake_glue_catalog.db1_shared_dev_a_nimbus__nimbusdb__public_run_to_step_association run_to_step_association
 JOIN nr ON nr.id = run_to_step_association.run_id
 JOIN ns ON ns.id = run_to_step_association.step_id
-JOIN nr nr2 ON nr2.id = ns.original_run_id;
+JOIN nr nr2 ON nr2.id = ns.original_run_id
+WITH NO SCHEMA BINDING;
 
 -- Grants
 GRANT SELECT ON public.v_nimbus_runs_dp_km TO "IAMR:cu-rem-pm-users";

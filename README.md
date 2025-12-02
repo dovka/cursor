@@ -24,6 +24,7 @@ The `v_nimbus_runs_dp_km` view has been successfully converted from Aurora Postg
 | **FILE_INDEX.md** | Complete file listing & navigation | Finding specific information |
 | **QUICK_REFERENCE.md** | 1-page overview | 👈 **Start here** |
 | **SUMMARY.txt** | Executive summary (printable) | Overview & approvals |
+| **SYNTAX_ERROR_FIXED.md** | Fix for WITH syntax error | ⚠️ If you got syntax error |
 | **CONVERSION_SUMMARY.md** | Detailed analysis & assumptions | Before deployment - confirm assumptions |
 | **COMPLETE_FIELD_LIST.md** | All 53 fields with descriptions | Field verification |
 | **FIELD_COMPARISON.md** | Field-by-field comparison | Verify data type compatibility |

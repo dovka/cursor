@@ -16,20 +16,24 @@ Both SQL files have been updated with `WITH NO SCHEMA BINDING`:
 
 ### Before (Caused Error)
 ```sql
-CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km
-AS
+CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km AS
 WITH nr AS (
     SELECT ...
+    ...
+);
 ```
 
 ### After (Fixed)
 ```sql
-CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km
-WITH NO SCHEMA BINDING
-AS
+CREATE OR REPLACE VIEW public.v_nimbus_runs_dp_km AS
 WITH nr AS (
     SELECT ...
+    ...
+)
+WITH NO SCHEMA BINDING;
 ```
+
+**Important**: `WITH NO SCHEMA BINDING` goes at the **END** of the statement, not after the view name.
 
 ---
 
