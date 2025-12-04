@@ -12,12 +12,12 @@ All fields from the original Postgres view are preserved in the Redshift convers
 |---|------------|--------|------|-------|
 | 1 | run_id | nr.id | integer | Primary identifier for run |
 | 2 | run_uuid | nr.uuid | varchar | Unique identifier for run |
-| 3 | run_time_created | nr.time_created | timestamp | Run creation timestamp |
+| 3 | run_time_created | nr.time_created | date | Run creation date (time component removed) |
 | 4 | run_status | nr.status | varchar | Run status |
 | 5 | run_nevo_topic_identifier | nr.nevo_topic_identifier | varchar | Nevo topic ID |
 | 6 | run_name | nr.run_name | varchar | Name of the run |
 | 7 | run_map_name | nr.map_name | varchar | Map name for run |
-| 8 | run_end_time | nr.end_time | timestamp | Run end timestamp |
+| 8 | run_end_time | nr.end_time | date | Run end date (time component removed) |
 | 9 | run_cloud_region | nr.cloud_region | varchar | Cloud region for run |
 | 10 | created_by_user | nr.created_by_user | varchar | User who created run |
 | 11 | nimbus_runs_failure_reason | nr.nimbus_runs_failure_reason | varchar | Human-readable failure reason (from join) |
@@ -45,12 +45,12 @@ All fields from the original Postgres view are preserved in the Redshift convers
 | 33 | process_metadata_evaluator | ns.process_metadata_evaluator | varchar | Evaluator from JSON |
 | 34 | step_id | ns.id | integer | Primary identifier for step |
 | 35 | step_uuid | ns.uuid | varchar | Unique identifier for step |
-| 36 | step_time_created | ns.time_created | timestamp | Step creation timestamp |
+| 36 | step_time_created | ns.time_created | date | Step creation date (time component removed) |
 | 37 | step_name | ns.step_name | varchar | Name of the step |
 | 38 | step_status | ns.status | varchar | Step status |
 | 39 | step_failure_reason | ns.failure_reason | integer | Raw failure reason value |
-| 40 | step_start_time | ns.start_time | timestamp | Step start timestamp |
-| 41 | step_end_time | ns.end_time | timestamp | Step end timestamp |
+| 40 | step_start_time | ns.start_time | date | Step start date (time component removed) |
+| 41 | step_end_time | ns.end_time | date | Step end date (time component removed) |
 | 42 | step_number_of_cores | ns.number_of_cores | integer | Number of cores for step |
 | 43 | step_original_run_id | ns.original_run_id | integer | Original run ID reference |
 | 44 | step_cloud_region | ns.cloud_region | varchar | Cloud region for step |

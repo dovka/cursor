@@ -61,8 +61,9 @@
 ## Summary
 
 - **Total Fields**: 53
-- **✅ Exact/Compatible Matches**: 47 fields
+- **✅ Exact/Compatible Matches**: 42 fields
 - **⚠️ Version-Dependent**: 6 fields (statistics fields - rows 48-53)
+- **⚠️ Date Cast**: 5 fields (timestamp → date - rows 3, 8, 36, 40, 41)
 
 ## Version Differences
 

@@ -199,7 +199,14 @@ Please confirm the following assumptions:
 **Original**: All time fields are TIMESTAMP  
 **Table example**: Casts to DATE (loses time component)
 
-**Confirm**: Keep as TIMESTAMP? ☐ YES ☐ NO (cast to DATE)
+**DECISION**: ✅ Cast to DATE (matching table example)
+
+**Fields changed to DATE**:
+- run_time_created
+- run_end_time
+- step_time_created
+- step_start_time
+- step_end_time
 
 ---
 
