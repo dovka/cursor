@@ -59,17 +59,17 @@ Choose one:
 SECTION 4: TIMESTAMP FIELDS
 ================================================================================
 
-Assumption: Keep timestamp fields with full date+time (not just date)
+DECISION: ✅ Cast to DATE (matches MV_RUNS_DP_KM table pattern)
 
-Fields affected:
+Fields affected (now cast to DATE):
   - run_time_created
   - run_end_time
   - step_time_created
   - step_start_time
   - step_end_time
 
-[ ] CONFIRMED - Keep as TIMESTAMP
-[ ] NEEDS CHANGE - Cast to DATE (will lose time component)
+[X] CONFIRMED - Cast to DATE (time component removed)
+[ ] Keep as TIMESTAMP
 
 ================================================================================
 SECTION 5: GRANTS AND PERMISSIONS

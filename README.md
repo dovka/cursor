@@ -59,8 +59,9 @@ The `v_nimbus_runs_dp_km` view has been successfully converted from Aurora Postg
 ✅ **Field names** match exactly  
 ✅ **Field order** matches exactly  
 ✅ **Conversion is possible** without data loss  
+✅ **Timestamp fields** cast to DATE (matches MV_RUNS_DP_KM table)
 
-⚠️ **Assumptions require confirmation** (see CONVERSION_SUMMARY.md)
+⚠️ **Some assumptions require confirmation** (see CONVERSION_SUMMARY.md)
 
 ---
 

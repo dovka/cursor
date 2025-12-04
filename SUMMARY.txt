@@ -102,7 +102,7 @@ Before deploying, please confirm these assumptions:
        [ ] Keep as VARCHAR (Version 1 - recommended)
        [ ] Cast to FLOAT/INT (Version 2 - alternative)
 
-[ ] 4. Timestamp fields should remain as TIMESTAMP (not cast to DATE)
+[X] 4. Timestamp fields CAST TO DATE (decision made - matches MV_RUNS_DP_KM table)
 
 [ ] 5. Grant roles are correct:
        - "IAMR:cu-rem-pm-users"

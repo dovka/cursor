@@ -6,12 +6,12 @@
 |---|------------|---------------|---------------------------|---------------------------|--------------|
 | 1 | run_id | integer | integer | integer | ✅ Exact |
 | 2 | run_uuid | uuid/text | varchar | varchar | ✅ Compatible |
-| 3 | run_time_created | timestamp | timestamp | timestamp | ✅ Exact |
+| 3 | run_time_created | timestamp | date | date | ⚠️ Cast to date |
 | 4 | run_status | varchar | varchar | varchar | ✅ Exact |
 | 5 | run_nevo_topic_identifier | varchar | varchar | varchar | ✅ Exact |
 | 6 | run_name | varchar | varchar | varchar | ✅ Exact |
 | 7 | run_map_name | varchar | varchar | varchar | ✅ Exact |
-| 8 | run_end_time | timestamp | timestamp | timestamp | ✅ Exact |
+| 8 | run_end_time | timestamp | date | date | ⚠️ Cast to date |
 | 9 | run_cloud_region | varchar | varchar | varchar | ✅ Exact |
 | 10 | created_by_user | varchar | varchar | varchar | ✅ Exact |
 | 11 | nimbus_runs_failure_reason | varchar | varchar | varchar | ✅ Exact |
@@ -39,12 +39,12 @@
 | 33 | process_metadata_evaluator | text | varchar | varchar | ✅ Compatible |
 | 34 | step_id | integer | integer | integer | ✅ Exact |
 | 35 | step_uuid | uuid/text | varchar | varchar | ✅ Compatible |
-| 36 | step_time_created | timestamp | timestamp | timestamp | ✅ Exact |
+| 36 | step_time_created | timestamp | date | date | ⚠️ Cast to date |
 | 37 | step_name | varchar | varchar | varchar | ✅ Exact |
 | 38 | step_status | varchar | varchar | varchar | ✅ Exact |
 | 39 | step_failure_reason | integer | integer | integer | ✅ Exact |
-| 40 | step_start_time | timestamp | timestamp | timestamp | ✅ Exact |
-| 41 | step_end_time | timestamp | timestamp | timestamp | ✅ Exact |
+| 40 | step_start_time | timestamp | date | date | ⚠️ Cast to date |
+| 41 | step_end_time | timestamp | date | date | ⚠️ Cast to date |
 | 42 | step_number_of_cores | integer | integer | integer | ✅ Exact |
 | 43 | step_original_run_id | integer | integer | integer | ✅ Exact |
 | 44 | step_cloud_region | varchar | varchar | varchar | ✅ Exact |
@@ -67,22 +67,31 @@
 
 ## Version Differences
 
-### Version 1: Exact Field Type Match (v_nimbus_runs_dp_km_redshift.sql)
+### Version 1: VARCHAR Statistics (v_nimbus_runs_dp_km_redshift.sql)
 - Statistics fields (48-53) remain as **VARCHAR**
-- Matches original Postgres view behavior exactly
-- Requires explicit casting in queries for numeric operations
+- Timestamp fields (3, 8, 36, 40, 41) cast to **DATE**
+- Date casting matches MV_RUNS_DP_KM table pattern
+- Requires explicit casting in queries for numeric operations on statistics
 
-### Version 2: Optimized for Redshift (v_nimbus_runs_dp_km_redshift_with_numeric_casting.sql)
+### Version 2: Numeric Statistics (v_nimbus_runs_dp_km_redshift_with_numeric_casting.sql)
 - Statistics fields (48-53) cast to **FLOAT/INT**
+- Timestamp fields (3, 8, 36, 40, 41) cast to **DATE**
 - Handles 'NaN' and empty string values using NULLIF
 - Better performance for queries with numeric operations
-- Matches the MV_RUNS_DP_KM table approach
+- Fully matches the MV_RUNS_DP_KM table approach
 
 ## Recommendation
 
-**If unsure, use Version 1** - It provides an exact field-type match to the original Postgres view.
+**Use Version 1 if**:
+- You want VARCHAR statistics fields (simpler, no NaN handling needed)
+- You're okay with date-only fields (no time component)
 
 **Use Version 2 if**:
 - You frequently perform calculations on statistics fields
-- You want to match the existing MV_RUNS_DP_KM table pattern
+- You want to fully match the existing MV_RUNS_DP_KM table pattern
 - You prefer explicit NULL handling for invalid numeric values
+
+**Both versions now**:
+- Cast timestamp fields to DATE (matching table pattern)
+- Use late binding (`WITH NO SCHEMA BINDING`)
+- Include all 53 fields from original view
