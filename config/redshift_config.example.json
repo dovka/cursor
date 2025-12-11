@@ -1,0 +1,11 @@
+{
+  "data_source_id": "redshift-prod-datasource",
+  "name": "Production Redshift Cluster",
+  "cluster_id": "my-redshift-cluster",
+  "host": "my-redshift-cluster.abc123.us-east-1.redshift.amazonaws.com",
+  "port": 5439,
+  "database": "analytics",
+  "username": "quicksight_user",
+  "password": "REPLACE_WITH_ACTUAL_PASSWORD",
+  "vpc_connection_arn": "arn:aws:quicksight:us-east-1:123456789012:vpcConnection/vpc-connection-id"
+}

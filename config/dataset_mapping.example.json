@@ -1,0 +1,6 @@
+{
+  "old-dataset-id-1": "new-dataset-id-1",
+  "old-dataset-id-2": "new-dataset-id-2",
+  "sales-aurora-dataset": "sales-redshift-dataset",
+  "customers-aurora-dataset": "customers-redshift-dataset"
+}
