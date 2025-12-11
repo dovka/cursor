@@ -1,0 +1,25 @@
+{
+  "aws_account_id": "123456789012",
+  "region": "us-east-1",
+  "aurora_datasource_id": "aurora-prod-datasource",
+  "redshift_config": {
+    "data_source_id": "redshift-prod-datasource",
+    "name": "Production Redshift Cluster",
+    "cluster_id": "my-redshift-cluster",
+    "host": "my-redshift-cluster.abc123.us-east-1.redshift.amazonaws.com",
+    "port": 5439,
+    "database": "analytics",
+    "username": "quicksight_user",
+    "password": "REPLACE_WITH_ACTUAL_PASSWORD",
+    "vpc_connection_arn": "arn:aws:quicksight:us-east-1:123456789012:vpcConnection/vpc-connection-id"
+  },
+  "migration_mode": "clone",
+  "suffix": "-redshift",
+  "notes": {
+    "migration_modes": [
+      "clone - Create new datasets/analyses (safer, allows testing)",
+      "update - Modify existing datasets in-place (faster, higher risk)"
+    ],
+    "suffix": "Used only in clone mode to name new resources"
+  }
+}
