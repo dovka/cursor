@@ -173,29 +173,139 @@ A rollback script will be provided to:
 
 ---
 
-## SUMMARY OF DECISIONS NEEDED
-
-Please confirm or modify:
+## ✅ CONFIRMED DECISIONS
 
 1. ✅ HASH partitioning on `(main_quadkey, map_id)` with 20 buckets
-2. ❓ PK column order: `(id, main_quadkey, map_id)` or `(main_quadkey, map_id, id)`
-3. ❓ How to handle NULL values in `main_quadkey` or `map_id`
-4. ❓ Naming convention for new FK columns in referencing tables
-5. ❓ Confirm all 11 indexes should be recreated
-6. ❓ Zero-downtime required or maintenance window acceptable
+2. ✅ **PK column order**: `PRIMARY KEY (id, main_quadkey, map_id)` - Option A selected
+   - Note: Can create separate index `(main_quadkey, map_id, id)` for partition pruning optimization
+3. ✅ **NULL handling**: 
+   - Only migrate rows where `map_id IS NOT NULL`
+   - Set `main_quadkey = 0` if NULL at source
+4. ✅ **FK column naming**: Use `main_quadkey`, `map_id` (Option B)
+   - Action required: Identify which referencing tables already have these columns
+   - Make NO changes until confirmed
+5. ✅ Keep all 11 indexes
+6. ✅ **Migration type**: POC on test instance, defer detailed migration requirements for now
 7. ✅ Keep existing sequences and defaults
 8. ✅ Preserve outbound FK constraints from signs table
-9. ❓ Acceptable that queries without partition key filters scan all partitions
-10. ❓ Rollback requirements
+9. ✅ Acceptable that queries without partition key filters scan all partitions
+10. ⏸️ Rollback requirements deferred (POC environment)
 
 ---
 
-## NEXT STEPS
+---
 
-Once you confirm the above assumptions, I will generate:
+## 🔴 CRITICAL: QUADKEY LEVEL CONVERSION (PENDING DEFINITION)
 
-1. **01_signs_partitioning_migration.sql** - Complete migration script
-2. **02_signs_partitioning_rollback.sql** - Rollback script
-3. **03_signs_partitioning_validation.sql** - Data validation queries
-4. **04_signs_partitioning_fk_updates.sql** - Foreign key updates for referencing tables
+### Current Situation
+- **Source data**: Contains level 15 quadkeys (stored in `main_quadkey` column)
+- **Partitioning requirement**: Use level 12 quadkeys for partitioning
+- **Conversion needed**: Level 15 → Level 12 (truncate 3 levels)
+
+### Questions Requiring Clarification
+
+#### 1. Quadkey Storage Format
+The `main_quadkey` column is defined as `INTEGER`. 
+
+**❓ How is the quadkey encoded in the integer?**
+- Option A: Quadkey string converted to integer (e.g., "023010213" → 23010213)
+- Option B: Morton code / Z-order curve integer representation
+- Option C: Custom encoding scheme
+
+**Example**: If level 15 quadkey is "023010213012301" (15 digits), how do we convert to level 12?
+- String truncation: "023010213012301" → "023010213012" (first 12 characters)
+- Integer division: Depends on encoding scheme
+
+#### 2. Column Strategy
+**❓ Which approach do you prefer?**
+
+**Option A: Single Column (Level 12 Only)**
+- Store only level 12 quadkey in `main_quadkey` column
+- Convert during migration: `main_quadkey_level12 = convert_to_level12(main_quadkey_level15)`
+- Partition on the converted level 12 value
+- **Pros**: Simple, clean schema
+- **Cons**: Lose level 15 precision, may need to recompute if needed
+
+**Option B: Dual Columns**
+- Keep existing `main_quadkey` (level 15) as-is
+- Add new column `main_quadkey_l12` or `partition_quadkey` (level 12)
+- Partition on the level 12 column
+- **Pros**: Preserve original data, can query either level
+- **Cons**: Data duplication, more storage
+
+**Option C: Computed Column**
+- Keep `main_quadkey` (level 15)
+- Add GENERATED column that computes level 12 on-the-fly
+- Partition on the generated column
+- **Pros**: No duplication, always in sync
+- **Cons**: May impact performance, PostgreSQL limitations
+
+#### 3. Conversion Function
+**❓ Please specify the exact conversion logic:**
+
+```sql
+-- Example conversions (need your confirmation):
+
+-- If quadkey is stored as string-like integer:
+-- Level 15: 23010213012301 (14 digits actual, conceptually 15 levels including root)
+-- Level 12: 23010213012 (11 digits, remove last 3)
+
+-- Option 1: Simple integer division
+main_quadkey_l12 = main_quadkey / 1000  -- if base-10 per level
+
+-- Option 2: String manipulation
+main_quadkey_l12 = CAST(LEFT(CAST(main_quadkey AS TEXT), 12) AS INTEGER)
+
+-- Option 3: Bitwise operation (if Morton encoding)
+main_quadkey_l12 = main_quadkey >> (2 * 3)  -- shift right 6 bits (2 bits per level * 3 levels)
+
+-- Option 4: Custom function
+main_quadkey_l12 = your_quadkey_truncate_function(main_quadkey, 15, 12)
+```
+
+#### 4. Partition Key Decision
+**❓ Partition key will be:**
+- `PARTITION BY HASH (main_quadkey_l12, map_id)` - if using separate column
+- `PARTITION BY HASH (truncate_quadkey(main_quadkey), map_id)` - if using function
+- `PARTITION BY HASH (main_quadkey / 1000, map_id)` - if using expression
+
+#### 5. Foreign Key Impact
+If we change `main_quadkey` to level 12 (Option A), or add a new column (Option B):
+
+**❓ Should referencing tables store:**
+- Level 12 quadkey (matches partition key)
+- Level 15 quadkey (matches original precision)
+- Both levels
+
+---
+
+## REQUIRED INFORMATION
+
+**Please provide:**
+
+1. **Conversion formula**: Exact SQL expression to convert level 15 → level 12
+2. **Column strategy**: Single column (A), Dual columns (B), or Computed (C)
+3. **Sample data**: Example `main_quadkey` values so we can validate conversion
+4. **FK storage**: What level should referencing tables store?
+
+**Example Response Format:**
+```
+Conversion: main_quadkey_l12 = FLOOR(main_quadkey / 1000)
+Strategy: Option B (Dual columns) - add main_quadkey_l12
+FK Storage: Level 12 to match partition key
+Sample: main_quadkey = 123456789012345 → main_quadkey_l12 = 123456789012
+```
+
+---
+
+## NEXT STEPS (ON HOLD)
+
+⏸️ **Waiting for quadkey level conversion specification before proceeding.**
+
+Once quadkey conversion is defined, I will generate:
+
+1. **01_signs_partitioning_migration.sql** - Complete migration script with quadkey conversion
+2. **02_signs_partitioning_validation.sql** - Data validation queries
+3. **03_signs_fk_table_analysis.sql** - Analysis of referencing tables
+4. **04_signs_partitioning_indexes.sql** - All index creation statements
 
